@@ -1,13 +1,12 @@
---Ejemplo eliminar usuario: DROP USER ClienteFrecuente CASCADE;
-
 --CREACIÓN DEL ESQUEMA
 CREATE USER ClienteFrecuente IDENTIFIED BY ClienteFrecuente;
 
+--ASIGNAR PERMISOS
 GRANT connect, dba TO ClienteFrecuente;
 
---CONSTRUCCIÓN DE LA ESTRUCTURA
---CONNECT ClienteFrecuente/ClienteFrecuente@ORCL;
 CONNECT ClienteFrecuente/ClienteFrecuente;
+
+--CONSTRUCCIÓN DE LA ESTRUCTURA
 
 CREATE TABLE D_MOVIMIENTO
 (
@@ -86,14 +85,14 @@ CantMovimientosCuentas NUMBER(5) CONSTRAINT h_clifre_cant_nn NOT NULL,
 TotalCuentasCanceladas Number(5) CONSTRAINT h_clifre_totalcan_nn NOT NULL
 );
 
---VISTAS PARA EL LLENADO DE LAS DIMENSIONES
+--VISTAS PARA EL LLENADO DE LAS DIMENSIONES (Base de datos)
 
 CREATE OR REPLACE VIEW v_d_movimiento AS
 SELECT DISTINCT mov.int_movinumero as CodMovimiento,
 tip.chr_tipocodigo as Tipo_Movimiento,
 mov.dec_moviimporte as Importe
-FROM TipoMovimiento tip
-JOIN Movimiento mov ON tip.chr_tipocodigo = mov.chr_tipocodigo;
+FROM eureka.TipoMovimiento tip
+JOIN eureka.Movimiento mov ON tip.chr_tipocodigo = mov.chr_tipocodigo;
 
 CREATE OR REPLACE VIEW v_d_cliente AS
 SELECT DISTINCT c.chr_cliecodigo AS CodCliente,
@@ -101,11 +100,11 @@ c.chr_cliedni AS Identificacion,
 m.id_municipio AS Cod_municipio,
 m.nombre AS Municipio,
 d.nombre AS Departamento
-FROM cliente c
-JOIN municipios m ON m.id_municipio = c.id_municipio
-JOIN departamentos d ON d.id_departamento = m.id_departamento
-JOIN cuenta cu ON cu.chr_cliecodigo = c.chr_cliecodigo
-JOIN movimiento mo ON mo.chr_cuencodigo = cu.chr_cuencodigo;
+FROM eureka.cliente c
+JOIN eureka.municipios m ON m.id_municipio = c.id_municipio
+JOIN eureka.departamentos d ON d.id_departamento = m.id_departamento
+JOIN eureka.cuenta cu ON cu.chr_cliecodigo = c.chr_cliecodigo
+JOIN eureka.movimiento mo ON mo.chr_cuencodigo = cu.chr_cuencodigo;
 
 CREATE OR REPLACE VIEW v_d_tiempo AS
 SELECT DISTINCT TO_CHAR(dtt_movifecha,'DD') AS Dia,
@@ -116,15 +115,15 @@ WHEN TO_CHAR(dtt_movifecha,'MM')<07 THEN '1'
 ELSE '2'
 END AS Semestre,
 LENGTH(TO_CHAR(dtt_movifecha,'day')) AS NomDia
-FROM movimiento;
+FROM eureka.movimiento;
 
 CREATE OR REPLACE VIEW v_d_cuenta AS
 SELECT DISTINCT cue.chr_cuencodigo AS Cod_cuenta,
 TRUNC(MONTHS_BETWEEN(mov.dtt_movifecha,cue.dtt_cuenfechacreacion)/12) AS Antiguedad,
 cue.dec_cuensaldo AS Saldo,
 cue.vch_cuenestado AS Estado
-FROM Cuenta cue
-JOIN Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo;
+FROM eureka.Cuenta cue
+JOIN eureka.Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo;
 
 CREATE OR REPLACE VIEW v_d_sucursal AS
 SELECT DISTINCT s.chr_sucucodigo AS Codigo,
@@ -132,20 +131,20 @@ s.vch_sucunombre AS Nombre,
 m.id_municipio AS Cod_municipio,
 m.nombre AS Municipio,
 d.nombre AS Departamento
-FROM Departamentos d
-JOIN Municipios m ON d.id_departamento = m.id_departamento
-JOIN Sucursal s ON m.id_municipio = s.id_municipio
-JOIN Cuenta cue ON s.chr_sucucodigo = cue.chr_sucucodigo
-JOIN Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo;
+FROM eureka.Departamentos d
+JOIN eureka.Municipios m ON d.id_departamento = m.id_departamento
+JOIN eureka.Sucursal s ON m.id_municipio = s.id_municipio
+JOIN eureka.Cuenta cue ON s.chr_sucucodigo = cue.chr_sucucodigo
+JOIN eureka.Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo;
 
---INSERTS PARA EL LLENADO DE LAS DIMENSIONES
+--INSERTS PARA EL LLENADO DE LAS DIMENSIONES (Bodega de datos)
 
 INSERT INTO D_MOVIMIENTO
 SELECT seq_movimiento.NEXTVAL,
 CodMovimiento,
 Tipo_Movimiento,
 Importe
-FROM system.v_d_movimiento;
+FROM eureka.v_d_movimiento;
 
 INSERT INTO D_CLIENTE
 SELECT seq_cliente.NEXTVAL,
@@ -154,7 +153,7 @@ Identificacion,
 Cod_municipio,
 Municipio,
 Departamento
-FROM system.v_d_cliente;
+FROM eureka.v_d_cliente;
 
 INSERT INTO D_TIEMPO
 SELECT seq_tiempo.NEXTVAL,
@@ -163,7 +162,7 @@ NomDia,
 Mes,
 Anno,
 Semestre
-FROM system.v_d_tiempo;
+FROM eureka.v_d_tiempo;
 
 INSERT INTO D_CUENTA
 SELECT seq_cuenta.NEXTVAL,
@@ -171,7 +170,7 @@ Cod_cuenta,
 Antiguedad,
 Saldo,
 Estado
-FROM system.v_d_cuenta;
+FROM eureka.v_d_cuenta;
 
 INSERT INTO D_SUCURSAL
 SELECT seq_sucursal.NEXTVAL,
@@ -180,9 +179,9 @@ Nombre,
 Cod_municipio,
 Municipio,
 Departamento
-FROM system.v_d_sucursal;
+FROM eureka.v_d_sucursal;
 
---VISTA PARA EL LLENADO DEL HECHO
+--VISTA PARA EL LLENADO DEL HECHO (Base de datos)
 
 CREATE OR REPLACE VIEW v_hecho AS
 SELECT DISTINCT cue.chr_cuencodigo AS Cod_cuenta,
@@ -197,15 +196,15 @@ mov.dec_moviimporte AS Importe_Movimiento,
 c.chr_cliecodigo AS CodCliente,
 munici.id_municipio AS Codmunicipio_Cliente,
 mov.dtt_movifecha AS Fecha
-FROM Municipios m
-JOIN Sucursal s ON m.id_municipio = s.id_municipio
-JOIN Cuenta cue ON s.chr_sucucodigo = cue.chr_sucucodigo
-JOIN Cliente c ON c.chr_cliecodigo = cue.chr_cliecodigo
-JOIN Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo
-JOIN TipoMovimiento tip ON tip.chr_tipocodigo = mov.chr_tipocodigo
-JOIN Municipios munici ON munici.id_municipio = c.id_municipio;
+FROM eureka.Municipios m
+JOIN eureka.Sucursal s ON m.id_municipio = s.id_municipio
+JOIN eureka.Cuenta cue ON s.chr_sucucodigo = cue.chr_sucucodigo
+JOIN eureka.Cliente c ON c.chr_cliecodigo = cue.chr_cliecodigo
+JOIN eureka.Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo
+JOIN eureka.TipoMovimiento tip ON tip.chr_tipocodigo = mov.chr_tipocodigo
+JOIN eureka.Municipios munici ON munici.id_municipio = c.id_municipio;
 
---FUNCIONES PARA CALCULAR LAS MEDIDAS DEL HECHO
+--FUNCIONES PARA CALCULAR LAS MEDIDAS DEL HECHO (Base de datos)
 
 CREATE OR REPLACE FUNCTION fun_cantcuentas
 (val_fecha DATE,
@@ -216,10 +215,10 @@ AS
 val_cantcuenta NUMBER;
 BEGIN
 SELECT Count(DISTINCT cue.chr_cuencodigo) INTO val_cantcuenta
-FROM Cuenta cue
-JOIN cliente cl ON cl.chr_cliecodigo = cue.chr_cliecodigo
-JOIN sucursal s ON s.chr_sucucodigo = cue.chr_sucucodigo
-JOIN movimiento m ON m.chr_cuencodigo = cue.chr_cuencodigo
+FROM eureka.Cuenta cue
+JOIN eureka.cliente cl ON cl.chr_cliecodigo = cue.chr_cliecodigo
+JOIN eureka.sucursal s ON s.chr_sucucodigo = cue.chr_sucucodigo
+JOIN eureka.movimiento m ON m.chr_cuencodigo = cue.chr_cuencodigo
 WHERE m.dtt_movifecha <= val_fecha
 AND s.id_municipio = val_codMun
 AND s.chr_sucucodigo = val_codSuc;
@@ -236,10 +235,10 @@ AS
 val_cuencanceladas NUMBER;
 BEGIN
 SELECT Count(DISTINCT cue.chr_cuencodigo) INTO val_cuencanceladas
-FROM Cuenta cue
-JOIN cliente cl ON cl.chr_cliecodigo = cue.chr_cliecodigo
-JOIN sucursal s ON s.chr_sucucodigo = cue.chr_sucucodigo
-JOIN movimiento m ON m.chr_cuencodigo = cue.chr_cuencodigo
+FROM eureka.Cuenta cue
+JOIN eureka.cliente cl ON cl.chr_cliecodigo = cue.chr_cliecodigo
+JOIN eureka.sucursal s ON s.chr_sucucodigo = cue.chr_sucucodigo
+JOIN eureka.movimiento m ON m.chr_cuencodigo = cue.chr_cuencodigo
 WHERE UPPER(cue.vch_cuenestado) = 'CANCELADO'
 AND m.dtt_movifecha <= val_fecha
 AND s.chr_sucucodigo = val_codSuc
@@ -248,12 +247,12 @@ RETURN val_cuencanceladas;
 END;
 /
 
---BLOQUE PARA EL LLENADO DEL HECHO
+--BLOQUE PARA EL LLENADO DEL HECHO (Bodega de datos)
 
 DECLARE
 
 CURSOR c_hecho
-IS SELECT * FROM system.v_hecho;
+IS SELECT * FROM eureka.v_hecho;
 
 r_hecho h_ClienteFrecuente%ROWTYPE;
 
@@ -311,9 +310,9 @@ FROM D_SUCURSAL
 WHERE codigo = val_codSuc AND cod_municipio = val_codMunSuc;
 
 
-r_hecho.CantMovimientosCuentas:= system.fun_cantcuentas(val_fecha,val_codSuc, val_codMunSuc);
+r_hecho.CantMovimientosCuentas:= eureka.fun_cantcuentas(val_fecha,val_codSuc, val_codMunSuc);
 
-r_hecho.TotalCuentasCanceladas:= system.fun_cuencanceladas(val_fecha,val_codSuc, val_codMunSuc);
+r_hecho.TotalCuentasCanceladas:= eureka.fun_cuencanceladas(val_fecha,val_codSuc, val_codMunSuc);
 
 INSERT INTO h_ClienteFrecuente
 VALUES r_hecho;
@@ -326,3 +325,5 @@ COMMIT;
 
 END;
 /
+
+commit;

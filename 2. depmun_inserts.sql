@@ -1,3 +1,171 @@
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(5, 'ANTIOQUIA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(8, 'ATLÁNTICO');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(11, 'BOGOTÁ, D.C.');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(13, 'BOLÍVAR');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(15, 'BOYACÁ');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(17, 'CALDAS');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(18, 'CAQUETÁ');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(19, 'CAUCA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(20, 'CESAR');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(23, 'CÓRDOBA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(25, 'CUNDINAMARCA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(27, 'CHOCÓ');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(41, 'HUILA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(44, 'LA GUAJIRA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(47, 'MAGDALENA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(50, 'META');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(52, 'NARIÑO');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(54, 'NORTE DE SANTANDER');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(63, 'QUINDIO');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(66, 'RISARALDA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(68, 'SANTANDER');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(70, 'SUCRE');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(73, 'TOLIMA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(76, 'VALLE DEL CAUCA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(81, 'ARAUCA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(85, 'CASANARE');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(86, 'PUTUMAYO');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(
+		88,
+		'ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA'
+	);
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(91, 'AMAZONAS');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(94, 'GUAINÍA');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(95, 'GUAVIARE');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(97, 'VAUPÉS');
+
+INSERT INTO
+	Departamentos (id_departamento, nombre)
+VALUES
+(99, 'VICHADA');
+
 INSERT INTO Municipios (id_municipio, nombre, estado, id_departamento)
 VALUES(1,'Abriaquí',1,5);
 INSERT INTO Municipios (id_municipio, nombre, estado, id_departamento)

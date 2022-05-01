@@ -1,0 +1,261 @@
+EUREKA BANK
+
+SQL> select * from tab;
+
+TNAME                          TABTYPE  CLUSTERID
+------------------------------ ------- ----------
+ASIGNADO                       TABLE
+CARGOMANTENIMIENTO             TABLE
+CLIENTE                        TABLE
+CONTADOR                       TABLE
+COSTOMOVIMIENTO                TABLE
+CUENTA                         TABLE
+DEPARTAMENTOS                  TABLE
+EMPLEADO                       TABLE
+INTERESMENSUAL                 TABLE
+MONEDA                         TABLE
+MOVIMIENTO                     TABLE
+
+TNAME                          TABTYPE  CLUSTERID
+------------------------------ ------- ----------
+MUNICIPIOS                     TABLE
+PARAMETRO                      TABLE
+SUCURSAL                       TABLE
+TIPOMOVIMIENTO                 TABLE
+USUARIO                        TABLE
+
+16 rows selected.
+
+SQL> select count(*) from departamentos;
+
+  COUNT(*)
+----------
+        33
+
+SQL> select count(*) from municipios;
+
+  COUNT(*)
+----------
+      1100
+
+SQL> select count(*) from sucursal;
+
+  COUNT(*)
+----------
+        51
+
+SQL> select count(*) from usuario;
+
+  COUNT(*)
+----------
+         8
+
+SQL> select count(*) from empleado;
+
+  COUNT(*)
+----------
+         8
+
+SQL> select count(*) from asignado;
+
+  COUNT(*)
+----------
+         9
+
+SQL> select count(*) from moneda;
+
+  COUNT(*)
+----------
+         2
+
+SQL> select count(*) from cliente;
+
+  COUNT(*)
+----------
+        52
+
+SQL> select count(*) from cuenta;
+
+  COUNT(*)
+----------
+        22
+
+SQL> select count(*) from tipomovimiento;
+
+  COUNT(*)
+----------
+        10
+
+SQL> select count(*) from movimiento;
+
+  COUNT(*)
+----------
+        53
+
+SQL> select count(*) from parametro;
+
+  COUNT(*)
+----------
+         2
+
+SQL> select count(*) from interesmensual;
+
+  COUNT(*)
+----------
+         2
+
+SQL> select count(*) from costomovimiento;
+
+  COUNT(*)
+----------
+         2
+
+SQL> select count(*) from cargomantenimiento;
+
+  COUNT(*)
+----------
+         2
+
+SQL> select count(*) from contador;
+
+  COUNT(*)
+----------
+         7
+
+SQL> update cuenta
+  2  set int_cuencontmov = (SELECT count(int_movinumero)
+  3  FROM movimiento
+  4  WHERE movimiento.CHR_CUENCODIGO = CUENTA.chr_cuencodigo);
+
+22 rows updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from cliente)
+  3  where vch_conttabla = 'Cliente';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from empleado where chr_emplcodigo <> '9999')
+  3  where vch_conttabla = 'Empleado';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from sucursal)
+  3  where vch_conttabla = 'Sucursal';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from TipoMovimiento)
+  3  where vch_conttabla = 'TipoMovimiento';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from Moneda)
+  3  where vch_conttabla = 'Moneda';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from Asignado)
+  3  where vch_conttabla = 'Asignado';
+
+1 row updated.
+
+SQL> update contador
+  2  set int_contitem = (select count(*) from Parametro)
+  3  where vch_conttabla = 'Parametro';
+
+1 row updated.
+
+SQL> update sucursal
+  2  set int_sucucontcuenta =
+  3  (select count(*) from cuenta
+  4  where cuenta.chr_sucucodigo=sucursal.chr_sucucodigo);
+
+51 rows updated.
+
+SQL> commit;
+
+Commit complete.
+
+--Finaliza la base de datos de datos
+
+--Comienza la bodega de datos
+
+SQL> INSERT INTO D_MOVIMIENTO
+  2  SELECT seq_movimiento.NEXTVAL,
+  3  CodMovimiento,
+  4  Tipo_Movimiento,
+  5  Importe
+  6  FROM eureka.v_d_movimiento;
+
+48 rows created.
+
+SQL> INSERT INTO D_CLIENTE
+  2  SELECT seq_cliente.NEXTVAL,
+  3  CodCliente,
+  4  Identificacion,
+  5  Cod_municipio,
+  6  Municipio,
+  7  Departamento
+  8  FROM eureka.v_d_cliente;
+
+10 rows created.
+
+SQL> INSERT INTO D_TIEMPO
+  2  SELECT seq_tiempo.NEXTVAL,
+  3  Dia,
+  4  NomDia,
+  5  Mes,
+  6  Anno,
+  7  Semestre
+  8  FROM eureka.v_d_tiempo;
+
+44 rows created.
+
+SQL> INSERT INTO D_CUENTA
+  2  SELECT seq_cuenta.NEXTVAL,
+  3  Cod_cuenta,
+  4  Antiguedad,
+  5  Saldo,
+  6  Estado
+  7  FROM eureka.v_d_cuenta;
+
+19 rows created.
+
+SQL> INSERT INTO D_SUCURSAL
+  2  SELECT seq_sucursal.NEXTVAL,
+  3  Codigo,
+  4  Nombre,
+  5  Cod_municipio,
+  6  Municipio,
+  7  Departamento
+  8  FROM eureka.v_d_sucursal;
+
+6 rows created.
+
+SQL> select count(*) from h_clientefrecuente;
+
+  COUNT(*)
+----------
+        53
+
+--Finaliza la bodega de datos
+
+Ejemplo de cómo borrar un usuario:
+DROP USER ClienteFrecuente CASCADE;
+
+Ejemplo de cómo borrar tabla:
+drop table tabla_nombre cascade constraints;
+
+Ejemplo de cómo borrar vista:
+drop view vista_nombre;
+
+
+
+
+

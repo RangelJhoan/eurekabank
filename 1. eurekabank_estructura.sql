@@ -1,7 +1,13 @@
---Ejemplo de cómo borrar tabla: drop table state cascade constraints;
+--CREAR EL ESQUEMA Y USUARIO
+CREATE USER eureka IDENTIFIED BY eureka;
+
+GRANT connect, dba TO eureka;
+
+--CONSTRUCCIÓN DE LA ESTRUCTURA
+--CONNECT ClienteFrecuente/ClienteFrecuente@ORCL;
+CONNECT eureka/eureka;
 
 --Tabla Departamentos
-DROP TABLE DEPARTAMENTOS PURGE;
 
 CREATE TABLE Departamentos(
 	id_departamento NUMBER(2) NOT NULL,
@@ -80,10 +86,10 @@ CREATE TABLE Cliente (
 );
 
 CREATE TABLE Cuenta (
-	chr_cuencodigo CHAR(8) NOT NULL,--Ya
-	chr_monecodigo CHAR(2) NOT NULL,--Ya
-	chr_sucucodigo CHAR(3) NOT NULL,--Ya
-	chr_emplcreacuenta CHAR(4) NOT NULL,--Ya
+	chr_cuencodigo CHAR(8) NOT NULL,
+	chr_monecodigo CHAR(2) NOT NULL,
+	chr_sucucodigo CHAR(3) NOT NULL,
+	chr_emplcreacuenta CHAR(4) NOT NULL,
 	chr_cliecodigo CHAR(5) NOT NULL,
 	dec_cuensaldo NUMBER(12, 2) NOT NULL,
 	dtt_cuenfechacreacion DATE NOT NULL,
@@ -161,7 +167,3 @@ CREATE TABLE Contador (
 	int_contlongitud NUMBER(3, 0) NOT NULL,
 	CONSTRAINT PK_CONTADORES PRIMARY KEY (vch_conttabla)
 );
-
-
-
-
