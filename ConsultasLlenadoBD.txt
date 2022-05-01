@@ -195,7 +195,7 @@ END;
 
 
 
---TotalCuentasCanceladas:Cantidad de cuentas canceladas en una 
+--TotalCuentasCanceladas:Cantidad de cuentas canceladas en una
 determinada sucursal en un departamento determinado.
 
 CREATE OR REPLACE FUNCTION fun_cuencanceladas
@@ -212,7 +212,7 @@ FROM eureka.Departamento dep JOIN Municipio mun ON dep.chr_depacodigo = mun.chr_
      eureka.Sucursal s ON mun.chr_municodigo = s.chr_municodigo JOIN
      eureka.Cuenta cue ON s.chr_sucucodigo = cue.chr_sucucodigo JOIN
      eureka.Movimiento mov ON cue.chr_cuencodigo = mov.chr_cuencodigo
-WHERE cue.vch_cuenestado = 'CANCELADA' AND chr_sucucodigo = Sucursal AND 
+WHERE cue.vch_cuenestado = 'CANCELADA' AND chr_sucucodigo = Sucursal AND
       dep.depacodigo = Departamento AND mov.dtt_movifecha = FechaMovimiento;
 RETURN val_cuencanceladas;
 END;
